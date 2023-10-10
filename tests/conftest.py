@@ -27,8 +27,8 @@ def _add_sites_var(env_path: Path):
     with open(env_path, "r+") as f:
         content = f.read()
         content = re.sub(
-            rf"SITES=.*",
-            f"SITES=`tests.localhost`,`test-erpnext-site.localhost`,`test-pg-site.localhost`",
+            "SITES=.*",
+            "SITES=`tests.localhost`,`test-erpnext-site.localhost`,`test-pg-site.localhost`",
             content,
         )
         f.seek(0)

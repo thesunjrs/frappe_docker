@@ -12,7 +12,7 @@ def update_env(erpnext_version: str):
     with open("example.env", "r+") as f:
         content = f.read()
         content = re.sub(
-            rf"ERPNEXT_VERSION=.*", f"ERPNEXT_VERSION={erpnext_version}", content
+            "ERPNEXT_VERSION=.*", f"ERPNEXT_VERSION={erpnext_version}", content
         )
         f.seek(0)
         f.truncate()
