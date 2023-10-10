@@ -47,12 +47,10 @@ def test_endpoints(url: str, callback: Any, frappe_site: str):
     )
 
 
-@pytest.mark.skipif(
-    os.environ["FRAPPE_VERSION"][0:3] == "v12", reason="v12 doesn't have the asset"
-)
+@pytest.mark.skipif(os.environ["FRAPPE_VERSION"][:3] == "v12", reason="v12 doesn't have the asset")
 def test_assets_endpoint(frappe_site: str):
     check_url_content(
-        url=f"http://127.0.0.1/assets/frappe/images/frappe-framework-logo.svg",
+        url="http://127.0.0.1/assets/frappe/images/frappe-framework-logo.svg",
         callback=assets_cb,
         site_name=frappe_site,
     )

@@ -13,16 +13,15 @@ def cprint(*args, level: int = 1):
 
     default level = 1
     """
-    CRED = "\033[31m"
     CGRN = "\33[92m"
     CYLW = "\33[93m"
     reset = "\033[0m"
     message = " ".join(map(str, args))
     if level == 1:
-        print(CRED, message, reset)  # noqa: T001, T201
-    if level == 2:
+        print("\033[31m", message, reset)
+    elif level == 2:
         print(CGRN, message, reset)  # noqa: T001, T201
-    if level == 3:
+    elif level == 3:
         print(CYLW, message, reset)  # noqa: T001, T201
 
 
@@ -109,9 +108,7 @@ def init_bench_if_not_exist(args):
         env = os.environ.copy()
         if args.py_version:
             env["PYENV_VERSION"] = args.py_version
-        init_command = ""
-        if args.node_version:
-            init_command = f"nvm use {args.node_version};"
+        init_command = f"nvm use {args.node_version};" if args.node_version else ""
         if args.py_version:
             init_command += f"PYENV_VERSION={args.py_version} "
         init_command += "bench init "
@@ -132,7 +129,7 @@ def init_bench_if_not_exist(args):
         cprint("Set db_host to mariadb", level=3)
         subprocess.call(
             ["bench", "set-config", "-g", "db_host", "mariadb"],
-            cwd=os.getcwd() + "/" + args.bench_name,
+            cwd=f"{os.getcwd()}/{args.bench_name}",
         )
         cprint("Set redis_cache to redis://redis-cache:6379", level=3)
         subprocess.call(
@@ -143,7 +140,7 @@ def init_bench_if_not_exist(args):
                 "redis_cache",
                 "redis://redis-cache:6379",
             ],
-            cwd=os.getcwd() + "/" + args.bench_name,
+            cwd=f"{os.getcwd()}/{args.bench_name}",
         )
         cprint("Set redis_queue to redis://redis-queue:6379", level=3)
         subprocess.call(
@@ -154,7 +151,7 @@ def init_bench_if_not_exist(args):
                 "redis_queue",
                 "redis://redis-queue:6379",
             ],
-            cwd=os.getcwd() + "/" + args.bench_name,
+            cwd=f"{os.getcwd()}/{args.bench_name}",
         )
         cprint("Set redis_socketio to redis://redis-socketio:6379", level=3)
         subprocess.call(
@@ -165,12 +162,12 @@ def init_bench_if_not_exist(args):
                 "redis_socketio",
                 "redis://redis-socketio:6379",
             ],
-            cwd=os.getcwd() + "/" + args.bench_name,
+            cwd=f"{os.getcwd()}/{args.bench_name}",
         )
         cprint("Set developer_mode", level=3)
         subprocess.call(
             ["bench", "set-config", "-gp", "developer_mode", "1"],
-            cwd=os.getcwd() + "/" + args.bench_name,
+            cwd=f"{os.getcwd()}/{args.bench_name}",
         )
     except subprocess.CalledProcessError as e:
         cprint(e.output, level=1)
@@ -186,15 +183,10 @@ def create_site_in_bench(args):
     ]
     apps = os.listdir(f"{os.getcwd()}/{args.bench_name}/apps")
     apps.remove("frappe")
-    for app in apps:
-        new_site_cmd.append(f"--install-app={app}")
-
+    new_site_cmd.extend(f"--install-app={app}" for app in apps)
     new_site_cmd.append(args.site_name)
 
-    subprocess.call(
-        new_site_cmd,
-        cwd=os.getcwd() + "/" + args.bench_name,
-    )
+    subprocess.call(new_site_cmd, cwd=f"{os.getcwd()}/{args.bench_name}")
 
 
 if __name__ == "__main__":

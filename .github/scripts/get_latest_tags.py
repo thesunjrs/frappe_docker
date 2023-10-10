@@ -34,10 +34,10 @@ def get_latest_tag(repo: Repo, version: MajorVersion) -> str:
     if not refs:
         raise RuntimeError(f'No tags found for version "{regex}"')
     ref = refs[-1]
-    matches: list[str] = re.findall(regex, ref)
-    if not matches:
+    if matches := re.findall(regex, ref):
+        return matches[0]
+    else:
         raise RuntimeError(f'Can\'t parse tag from ref "{ref}"')
-    return matches[0]
 
 
 def update_env(file_name: str, frappe_tag: str, erpnext_tag: str | None = None):
@@ -67,8 +67,7 @@ def main(_args: list[str]) -> int:
     else:
         erpnext_tag = None
 
-    file_name = os.getenv("GITHUB_ENV")
-    if file_name:
+    if file_name := os.getenv("GITHUB_ENV"):
         update_env(file_name, frappe_tag, erpnext_tag)
     _print_resp(frappe_tag, erpnext_tag)
     return 0

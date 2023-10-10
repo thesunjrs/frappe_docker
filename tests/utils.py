@@ -79,8 +79,7 @@ def check_url_content(
 
         else:
             text: str = response.read().decode()
-            ret = callback(text)
-            if ret:
+            if ret := callback(text):
                 print(ret)
                 return
 
